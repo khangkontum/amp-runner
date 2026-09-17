@@ -6,6 +6,10 @@
 
 A native macOS app for managing one app-owned [Amp runner](https://ampcode.com/docs/cli/runners) and its project folders. Keeps registrations persistent, runs in the background, and provides a menu-bar shortcut to the manager.
 
+![Amp Runner showing sample projects](docs/images/amp-runner.png)
+
+*Preview with fictional runner and project data.*
+
 ## Get started
 
 Requires **macOS 14+**, **Xcode 26+ / Swift 6** to build, and an installed Amp CLI with multi-directory support.
@@ -16,6 +20,14 @@ open "dist/Amp Runner.app"
 ```
 
 For regular use, move the complete app to `/Applications` before starting the runner. Builds are ad-hoc signed for local use, not notarized for distribution.
+
+If you've already started it from `dist/`:
+
+1. Stop the runner using the square control beside its status, then quit the manager with **⌘Q**. Stopping can interrupt active threads.
+2. In Finder, open this repository's `dist` folder and move **Amp Runner.app** into **Applications**. Move the whole app, not its internal executable.
+3. Open **Amp Runner** from Applications and start the runner again. Saved projects and the runner ID are retained. Re-enable **Start at login** if desired; stopping turns it off.
+
+For first-time setup:
 
 1. Run `amp login` in Terminal if needed. The app reuses Amp's sign-in and never stores an API key.
 2. Add project folders using **+**, **⌘N**, or drag-and-drop. Ordinary folders and Git repositories both work.
