@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18">
+  <defs>
+    <clipPath id="notch">
+      <path clip-rule="evenodd" d="M0 0H24V18H0Z M15.1 9a1.5 1.5 0 1 0-3 0a1.5 1.5 0 1 0 3 0Z"/>
+    </clipPath>
+  </defs>
+  <path d="M3 15 9 3 M9 15 15 3 M15 15 21 3" fill="none" stroke="black" stroke-width="3.2" stroke-linecap="round" clip-path="url(#notch)"/>
+</svg>

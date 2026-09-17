@@ -1,0 +1,14 @@
+# Swift Package Manager and Xcode build output
+.build/
+DerivedData/
+.swiftpm/xcode/xcuserdata/
+xcuserdata/
+*.xcuserstate
+
+# App bundles and local screenshots
+dist/
+
+# macOS metadata and Python caches
+.DS_Store
+__pycache__/
+*.py[cod]
