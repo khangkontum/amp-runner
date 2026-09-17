@@ -12,7 +12,17 @@ A native macOS app for managing one app-owned [Amp runner](https://ampcode.com/d
 
 ## Get started
 
-Requires **macOS 14+**, **Xcode 26+ / Swift 6** to build, and an installed Amp CLI with multi-directory support.
+Requires **macOS 14+** and an installed Amp CLI with multi-directory support.
+
+### Download
+
+Download the Apple Silicon ZIP from [GitHub Releases](https://github.com/khangkontum/amp-runner/releases), unzip it, and drag **Amp Runner.app** into **Applications**. No Xcode or build tools are needed. Release downloads target M1 and newer Macs, not Intel.
+
+The app is **ad-hoc signed, not notarized**. If macOS blocks it, try opening it, then use **System Settings → Privacy & Security → Open Anyway**, if available. Only approve a download you trust; managed Macs may disallow this override. Amp CLI is not bundled.
+
+### Build locally
+
+Requires **Xcode 26+ / Swift 6**:
 
 ```sh
 bash scripts/build-app.sh
@@ -111,3 +121,22 @@ App and menu-bar artwork lives in `Resources/AppIcon.svg` and `Resources/AmpRunn
 brew install librsvg # One-time prerequisite for asset regeneration
 bash scripts/build-icons.sh
 ```
+
+## Releases
+
+Push a version tag on a tested commit to build and publish an Apple Silicon release automatically:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Use a new `vMAJOR.MINOR.PATCH` tag for each release. The GitHub Actions workflow runs unit tests on `macos-26`, embeds the version in the app, verifies its ad-hoc signature and architecture, then publishes a ZIP and SHA-256 checksum. It uses GitHub's built-in token; no Apple credentials or custom secrets are needed. Repository Actions must be enabled and permitted to create releases. The launchd smoke test remains a local check requiring a GUI session.
+
+To produce the same assets locally on an Apple Silicon Mac, without publishing:
+
+```sh
+bash scripts/package-release.sh 0.1.0
+```
+
+Outputs: `dist/Amp-Runner-0.1.0-macos-arm64.zip` and its `.sha256` file. Packaging uses a temporary app bundle and does not overwrite or restart an installed runner.
