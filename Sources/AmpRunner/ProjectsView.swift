@@ -171,7 +171,8 @@ struct ProjectsView: View {
                 Text(path).font(type(11)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
                     .help(path).textSelection(.enabled)
                 if let error = model.status.errors[path] {
-                    Text(error).font(type(11)).foregroundStyle(.orange).lineLimit(2).help(error)
+                    Text("Couldn’t update this folder. Retrying…")
+                        .font(type(11)).foregroundStyle(.orange).lineLimit(2).help(error)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
             folderStatus(state)

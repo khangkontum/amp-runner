@@ -26,7 +26,9 @@ final class AppModel {
     var stalled: Bool { loaded && !preview && status.updatedAt != .distantPast && !status.isFresh }
     var title: String { running ? "Running" : stalled ? "Not responding" : loaded ? "Connecting" : "Stopped" }
     var serviceMessage: String {
-        stalled ? "The background helper stopped responding. Stop and start the runner to recover; Runner Settings has the logs." : status.message
+        if stalled { return "Runner stopped responding. Restart it to reconnect." }
+        if !status.message.isEmpty { return "Can’t connect to Amp. Retrying…" }
+        return ""
     }
     var paths: [String] {
         configuration.directories + status.managed.filter { !configuration.directories.contains($0) }
@@ -56,7 +58,7 @@ final class AppModel {
             try storage.save(configuration)
         } catch {
             configurationReadable = false
-            self.error = "Cannot read or save configuration. No settings were overwritten. \(error.localizedDescription)"
+            self.error = "Couldn’t load your settings. Nothing was changed."
         }
         Task { await monitor() }
     }
@@ -77,7 +79,9 @@ final class AppModel {
             try change(&updated)
             try storage.save(updated)
             configuration = updated
-        } catch { self.error = error.localizedDescription }
+        } catch {
+            self.error = (error as? RunnerError)?.localizedDescription ?? "Couldn’t save your changes. Try again."
+        }
     }
 
     func addFolders(_ urls: [URL]) { save { try $0.add(urls) } }
@@ -89,7 +93,7 @@ final class AppModel {
         // Check launchd directly, not the periodically refreshed UI status.
         loaded = await agent.isLoaded()
         guard !loaded else {
-            error = "Stop the runner before changing its ID. Active threads may be interrupted when it stops."
+            error = "Stop the runner before changing its ID."
             return
         }
         save { try $0.renameRunner(name) }
@@ -150,7 +154,9 @@ final class AppModel {
             try await Command.run(configuration.ampPath, ["usage"], timeout: 30).checked()
             try await agent.start(startAtLogin: configuration.startAtLogin)
             loaded = true
-        } catch { self.error = "Could not start the runner. \(error.localizedDescription)\nIf sign-in is required, run amp login in Terminal, then try again." }
+        } catch {
+            self.error = "Couldn’t start the runner. Check your Amp sign-in and Runner Settings, then try again."
+        }
     }
 
     func stop() async {
@@ -162,7 +168,7 @@ final class AppModel {
             loaded = false
             // Explicit Stop also disables launch at login; Start can re-enable it later.
             save { $0.startAtLogin = false }
-        } catch { self.error = error.localizedDescription }
+        } catch { self.error = "Couldn’t stop the runner. Try again." }
     }
 
     func setLogin(_ enabled: Bool) {
@@ -177,7 +183,7 @@ final class AppModel {
                 throw error
             }
             configuration = updated
-        } catch { self.error = error.localizedDescription }
+        } catch { self.error = "Couldn’t update Start at login. Try again." }
     }
 
     func folderState(_ path: String) -> (String, String) {

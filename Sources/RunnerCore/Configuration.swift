@@ -15,7 +15,7 @@ public struct Configuration: Codable, Sendable, Equatable {
                   !label.isEmpty && label.utf8.count <= 63 &&
                   label.range(of: "^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$", options: .regularExpression) != nil
               }) else {
-            throw RunnerError.message("Use a hostname: letters, numbers, and hyphens, with optional dots. Each part must start and end with a letter or number and be at most 63 characters.")
+            throw RunnerError.message("Use letters, numbers, hyphens, or dots—for example, studio-mac.")
         }
         runnerID = name
     }
